@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+.home-conyiner {
+    width: 300px;
+    height: 200px;
+    position: relative;
+    background-color: bl;
+}
+
+.logo {
+    width: 293px;
+    height: 33px;
+    background-color: red;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    top: 10px;
+    left: 4px;
+}
+
+.logo span {
+    font-family: "Kanit", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: white;
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.logo img {
+    filter: brightness(0) invert(1);
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+.search-bar {
+    width: 246px;
+    height: 35px;
+    display: flex;
+    margin-top: 30px;
+    margin-left: 25px;
+    position: relative;
+    border-radius: 20px;
+    border: 2px solid black;
+}
+
+.search-bar input {
+    width: 200px;
+    font-size: 10px;
+    color: black;
+    outline: none;
+    padding-left: 10px;
+    border-right: none;
+    border: none;
+}
+
+.search-bar button {
+    width: 50px;
+    background-color: red;
+    font-size: 20px;
+    color: white;
+    border-left: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 20px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.music {
+    width: 50px;
+    height: 60px;
+    position: relative;
+    top: 15px;
+    left: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.music .music-image {
+    background-color: #D9D9D9;
+    padding: 7px 0 7px 0;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.music span {
+    position: relative;
+    top: 3px;
+    font-family: "Kanit", sans-serif;
+    font-weight: 500;
+}
+
+.video {
+    width: 50px;
+    height: 60px;
+    position: relative;
+    position: absolute;
+    right: 50px;
+    bottom: 22px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.video .video-image {
+    background-color: #D9D9D9;
+    padding: 7px 0 7px 0;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video span {
+    position: relative;
+    top: 3px;
+    font-family: "Kanit", sans-serif;
+    font-weight: 500;
+}
+
+.footer {
+    background-color: red;
+    width: 294px;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 4px;
+}

@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "YouTube-Downloader",
+    "version": "1.0",
+    "description": "YouTube Easy Downloader Video And Audio uality Wise",
+    "background": {
+      "scripts": [
+        "background.js"
+      ],
+      "persistent": false
+    },
+      "browser_action": {
+      "default_popup": "popup/popup.html",
+      "default_title": "YouTube-Downloader"
+    },
+    "permissions": [
+      "activeTab",
+      "tabs"
+    ]
+}
