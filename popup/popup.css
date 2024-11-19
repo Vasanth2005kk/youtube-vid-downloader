@@ -1,140 +1,203 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap');
 
 * {
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    box-sizing: content-box;
+    box-sizing: border-box;
 }
 
-.home-conyiner {
+body {
+    font-family: "Kanit", sans-serif;
+    background-color: #f5f5f5;
+}
+
+.home-container,
+.main-music-container,
+.main-video-container {
     width: 300px;
-    height: 200px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
-    background-color: bl;
 }
 
+.home-container {
+    height: 200px;
+}
+
+#active {
+    display: none;
+}
+
+/* Logo Section */
 .logo {
-    width: 293px;
-    height: 33px;
     background-color: red;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    top: 10px;
-    left: 4px;
+    padding: 10px;
+    color: white;
 }
 
 .logo span {
-    font-family: "Kanit", sans-serif;
+    font-size: 18px;
     font-weight: 600;
-    font-style: normal;
-    color: white;
-    font-size: 20px;
     letter-spacing: 1px;
 }
 
 .logo img {
     filter: brightness(0) invert(1);
-    margin-left: 12px;
-    margin-right: 12px;
 }
 
+/* Search Bar */
 .search-bar {
-    width: 246px;
-    height: 35px;
     display: flex;
-    margin-top: 30px;
-    margin-left: 25px;
-    position: relative;
-    border-radius: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px auto;
+    padding: 5px;
     border: 2px solid black;
+    border-radius: 20px;
+    width: 90%;
 }
 
 .search-bar input {
-    width: 200px;
-    font-size: 10px;
-    color: black;
-    outline: none;
-    padding-left: 10px;
-    border-right: none;
+    flex: 1;
     border: none;
+    outline: none;
+    font-size: 13px;
+    background-color: transparent;
 }
 
 .search-bar button {
-    width: 50px;
     background-color: red;
-    font-size: 20px;
     color: white;
-    border-left: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border: none;
     border-radius: 20px;
-    margin: 2px;
     cursor: pointer;
+    padding: 5px 10px;
 }
 
-.music {
-    width: 50px;
-    height: 60px;
-    position: relative;
-    top: 15px;
-    left: 50px;
+/* Music and Video Buttons */
+.music,
+.video {
     text-align: center;
     cursor: pointer;
+    margin: 10px;
 }
 
-.music .music-image {
-    background-color: #D9D9D9;
-    padding: 7px 0 7px 0;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.music-image,
+.video-image {
+    background-color: #d9d9d9;
+    width: 50px;
+    padding: 10px;
+    border-radius: 60%;
+    margin: 0 auto 5px;
+
+}
+
+.music-image {
+    position: absolute;
+    bottom: 30px;
+    left: 40px;
+}
+
+.video-image {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
 }
 
 .music span {
-    position: relative;
-    top: 3px;
-    font-family: "Kanit", sans-serif;
     font-weight: 500;
-}
-
-.video {
-    width: 50px;
-    height: 60px;
-    position: relative;
+    font-size: 14px;
     position: absolute;
-    right: 50px;
-    bottom: 22px;
-    text-align: center;
-    cursor: pointer;
-}
+    bottom: 10px;
+    right: 45px;
 
-.video .video-image {
-    background-color: #D9D9D9;
-    padding: 7px 0 7px 0;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .video span {
+    font-weight: 500;
+    font-size: 14px;
+    position: absolute;
+    bottom: 10px;
+    left: 45px;
+}
+
+/* Footer and Header */
+.header {
+    top: 0;
+}
+
+.footer,
+.header {
+    background-color: red;
+    height: 5px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+/* Main Music Container */
+.icon-block {
+    text-align: center;
+    margin: 15px 0;
+    margin-top: 20px;
+}
+
+.icon-block img {
+    width: 40px;
+    margin-bottom: 5px;
+}
+
+.icon-block span {
+    font-size: 30px;
+    font-weight: 600;
     position: relative;
-    top: 3px;
-    font-family: "Kanit", sans-serif;
+    left: 10px;
+    top: -15px;
+}
+
+/* MP3 Formats */
+.mp3-formates,
+.mp4-formates {
+    width: 90%;
+    margin: 10px auto;
+    background-color: #d9d9d9;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.formates {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.formates label {
+    font-size: 16px;
     font-weight: 500;
 }
 
-.footer {
+.formates button {
     background-color: red;
-    width: 294px;
-    height: 10px;
-    position: absolute;
-    bottom: 0;
-    left: 4px;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 }

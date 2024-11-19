@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "YouTube-Downloader",
     "version": "1.0",
-    "description": "YouTube Easy Downloader Video And Audio quality Wise",
+    "description": "YouTube Easy Downloader Video And Audio uality Wise",
     "background": {
       "scripts": [
         "background.js"
