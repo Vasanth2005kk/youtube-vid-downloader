@@ -131,6 +131,9 @@ elif type=="audio":
     audio()
 else:
     print("Enter the valid type of media you want to download ")
-if type=="video":
-    os.remove("audio.mp3")
-    os.remove("video.mp4")
+try:
+    if type=="video":
+        os.remove("audio.mp3")
+        os.remove("video.mp4")
+except Exception:
+    print("---------------------")
