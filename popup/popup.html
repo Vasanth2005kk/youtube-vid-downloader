@@ -19,28 +19,31 @@
         </div>
         <!-- Search Bar -->
         <div class="search-bar">
-            <input type="text" placeholder="Search or Paste YouTube link here">
-            <button class="search-icon"><i class="fa fa-search"></i></button>
+            <input type="text" placeholder="Search or Paste YouTube link here" id="search-url">
         </div>
+        <div id="start">Start</div>
         <!-- Music and Video Buttons -->
-        <div class="music">
-            <div class="music-image">
-                <img src="images/wave-sound.png" alt="music icon" width="20px" height="24px">
+        <div class="video-audio-container" id="active">
+            <div class="music">
+                <div class="music-image">
+                    <img src="images/wave-sound.png" alt="music icon" width="20px" height="24px">
+                </div>
+                <span>Video</span>
             </div>
-            <span>Music</span>
-        </div>
-        <div class="video">
-            <div class="video-image">
-                <img src="images/film(1).png" alt="video icon" width="20px" height="23px">
+            <div class="video">
+                <div class="video-image">
+                    <img src="images/film(1).png" alt="video icon" width="20px" height="23px">
+                </div>
+                <span>Music</span>
             </div>
-            <span>Video</span>
+            <div class="footer"></div>
         </div>
-        <div class="footer"></div>
     </div>
 
 
+
     <!-- Main Music Container -->
-    <div class="main-music-container">
+    <div class="main-music-container" id="active">
         <div class="header"></div>
         <div class="icon-block">
             <img src="images/wave-sound.png" alt="music icon">
@@ -69,7 +72,7 @@
     </div>
 
     <!-- Main Video Container -->
-    <div class="main-video-container">
+    <div class="main-video-container" id="active">
         <div class="header"></div>
         <div class="icon-block">
             <img src="images/film(1).png" alt="music icon">
@@ -96,8 +99,8 @@
         </div>
         <div class="footer"></div>
     </div>
-
-
+    <script src="jquery-3.7.1.js.js"></script>
+    <script src="popup.js"></script>
 </body>
 
 </html>
