@@ -1,21 +1,39 @@
 from moviepy import VideoFileClip,AudioFileClip
 import os
 from pytube import YouTube
-url=input("Enter the url of youtube video:")
-# url="https://youtube.com/shorts/yIQjlWQ2Zlc?si=Er3JuN4AtipNyp-r"
-link=YouTube(url)
+
+URL =input("Enter the url :")
+link = YouTube(URL)
+
+video_qualities = []
+audio_qualities = []
+
+audiofile_name="audio.mp3"
+filename="video.mp4"
+
+for i in link.streams.filter(progressive=False,file_extension="mp4").order_by("resolution"):
+    if not (' progressive="True"' in str(i)):
+        resolution = ((str(i)[str(i).find('res="'):])[(str(i)[str(i).find('res="'):]).find('"')+1:(str(i)[str(i).find('res="'):]).find('"',5):])
+
+        video_qualities.append(str(resolution))
+
+
+for i in link.streams.filter(only_audio=True):
+    resolution = ((str(i)[str(i).find('abr="'):])[(str(i)[str(i).find('abr="'):]).find('"')+1:(str(i)[str(i).find('abr="'):]).find('"',5):])
+
+    audio_qualities.append(str(resolution))
+
 print("""
       video 
        or
       audio""")
-type=input("Enter the type of media:")
-# type="video"
-audiofile_name="audio.mp3"
-filename="video.mp4"
+Type = input("Enter the Type of media:")
+
 def audio_file():
-    audio_stm=link.streams.filter(only_audio=True)
+    audio_stm = link.streams.filter(only_audio=True)
     b=audio_stm.first()
     b.download(filename=audiofile_name)
+
 def connector():   
     video_path =filename
     audio_path =audiofile_name
@@ -26,114 +44,33 @@ def connector():
     print("Downloading...")
     video_with_audio.write_videofile(output_path,codec="libx264",audio_codec="aac")
     print("downloaded successfully")
-def video():
+    os.remove("audio.mp3")
+    os.remove("video.mp4")
+
+def video_downloader():
     stream=link.streams.filter(progressive=False,file_extension="mp4").order_by("resolution")
-    for v in stream:
-        print(v)
-    quality=["144p","240p","360p","480p","720p","1080p","1440p","2160p","4320p"]
-    for a in quality:
-        print(a)
-    resolution=input("Enter the quality :")
-    if resolution=="144p":
-        a=stream.filter(res="144p").first()
-        if  "res=" in str(stream) and "144p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-    elif resolution=="240p":
-        a=stream.filter(res="240p").first()
-        if  "res=" in str(stream) and "240p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="360p":
-        a=stream.filter(res="360p").first()
-        if  "res=" in str(stream) and "360p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="480p":
-        a=stream.filter(res="480p").first()
-        if  "res=" in str(stream) and "480p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="720p":
-        a=stream.filter(res="720p").first()
-        if  "res=" in str(stream) and "720p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="1080p":
-        a=stream.filter(res="1080p").first()
-        if  "res=" in str(stream) and "1080p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="1440p":
-        a=stream.filter(res="1440p").first()
-        if  "res=" in str(stream) and "1440p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="2160p":
-        a=stream.filter(res="2160p").first()
-        if  "res=" in str(stream) and "2160p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-        
-    elif resolution=="4320p":
-        a=stream.filter(res="4320p").first()
-        if  "res=" in str(stream) and "4320p" in str(stream):
-            audio_file()
-            print(a.download(filename=filename))
-            connector()
-        else:
-            print("The given resolution doesn't exist in the video")
-            
+    video_resolution = input("Enter the quality:")
+    if video_resolution in video_qualities:
+        a=stream.filter(res=video_resolution).first()
+        audio_file()
+        a.download(filename=filename)
+        connector()
     else:
         print("The given quality doen't found in the video")
 
-def audio():    
+def audio_downloader():    
     audio_stm=link.streams.filter(only_audio=True)
     b=audio_stm.first()
     print("downloading...")
     file_name=link.title+" .mp3"
     print(b.download(filename=file_name))
     print("done")
+if Type.lower() == "video":
+    print(video_qualities)
+    video_downloader()
     
-if type=="video":
-    video()
-elif type=="audio":
-    audio()
+elif Type.lower() ==  "audio":
+    print(audio_qualities)
+    audio_downloader()
 else:
-    print("Enter the valid type of media you want to download ")
-try:
-    if type=="video":
-        os.remove("audio.mp3")
-        os.remove("video.mp4")
-except Exception:
-    print("---------------------")
+    print("Please Enter The Vaild Media Type!!!")
