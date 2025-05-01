@@ -1,76 +1,76 @@
-from moviepy import VideoFileClip,AudioFileClip
-import os
-from pytube import YouTube
+import subprocess
+import re
 
-URL =input("Enter the url :")
-link = YouTube(URL)
+def get_video_resolutions(url):
+    result = subprocess.run(["yt-dlp", "-F", url], capture_output=True, text=True)
+    lines = result.stdout.splitlines()
 
-video_qualities = []
-audio_qualities = []
+    resolutions = set()
+    for line in lines:
+        if "video only" in line:
+            match = re.search(r'(\d{3,4})p', line)
+            if match:
+                resolutions.add(match.group(1))
+    return sorted(resolutions, key=int)
 
-audiofile_name="audio.mp3"
-filename="video.mp4"
+def get_audio_bitrates(url):
+    result = subprocess.run(["yt-dlp", "-F", url], capture_output=True, text=True)
+    lines = result.stdout.splitlines()
 
-for i in link.streams.filter(progressive=False,file_extension="mp4").order_by("resolution"):
-    if not (' progressive="True"' in str(i)):
-        resolution = ((str(i)[str(i).find('res="'):])[(str(i)[str(i).find('res="'):]).find('"')+1:(str(i)[str(i).find('res="'):]).find('"',5):])
+    bitrates = set()
+    for line in lines:
+        if "audio only" in line:
+            match = re.search(r'\b(\d{2,4})k\b', line)
+            if match:
+                bitrates.add(match.group(1))
+    return sorted(bitrates, key=int)
 
-        video_qualities.append(str(resolution))
+def download_video(url, resolution):
+    format_selector = f"bestvideo[height={resolution}]+bestaudio"
+    print(f"\nDownloading video at {resolution}p...\n")
+    subprocess.run(["yt-dlp", "-f", format_selector, url])
 
+def download_audio(url, bitrate):
+    # Automatically choose best audio ≤ given bitrate
+    format_selector = f"bestaudio[abr<={bitrate}]"
+    print(f"\nDownloading audio at ≤{bitrate}k...\n")
+    subprocess.run([
+        "yt-dlp",
+        "-f", format_selector,
+        "--extract-audio",
+        "--audio-format", "mp3",
+        url
+    ])
 
-for i in link.streams.filter(only_audio=True):
-    resolution = ((str(i)[str(i).find('abr="'):])[(str(i)[str(i).find('abr="'):]).find('"')+1:(str(i)[str(i).find('abr="'):]).find('"',5):])
-
-    audio_qualities.append(str(resolution))
+url = input("Enter the YouTube URL: ")
 
 print("""
       video 
        or
       audio""")
-Type = input("Enter the Type of media:")
+media_type = input("Enter the media type :").strip().lower()
 
-def audio_file():
-    audio_stm = link.streams.filter(only_audio=True)
-    b=audio_stm.first()
-    b.download(filename=audiofile_name)
-
-def connector():   
-    video_path =filename
-    audio_path =audiofile_name
-    output_path =link.title+".mp4"
-    video = VideoFileClip(video_path)
-    audio = AudioFileClip(audio_path)
-    video_with_audio = video.with_audio(audio)
-    print("Downloading...")
-    video_with_audio.write_videofile(output_path,codec="libx264",audio_codec="aac")
-    print("downloaded successfully")
-    os.remove("audio.mp3")
-    os.remove("video.mp4")
-
-def video_downloader():
-    stream=link.streams.filter(progressive=False,file_extension="mp4").order_by("resolution")
-    video_resolution = input("Enter the quality:")
-    if video_resolution in video_qualities:
-        a=stream.filter(res=video_resolution).first()
-        audio_file()
-        a.download(filename=filename)
-        connector()
+if media_type == "video":
+    res_list = get_video_resolutions(url)
+    if not res_list:
+        print("No video resolutions found.")
     else:
-        print("The given quality doen't found in the video")
+        print("\nAvailable Video Resolutions:")
+        for res in res_list:
+            print(f"{res}p")
+        selected_res = input("\nEnter resolution : ").strip()
+        download_video(url, selected_res)
 
-def audio_downloader():    
-    audio_stm=link.streams.filter(only_audio=True)
-    b=audio_stm.first()
-    print("downloading...")
-    file_name=link.title+" .mp3"
-    print(b.download(filename=file_name))
-    print("done")
-if Type.lower() == "video":
-    print(video_qualities)
-    video_downloader()
-    
-elif Type.lower() ==  "audio":
-    print(audio_qualities)
-    audio_downloader()
+elif media_type == "audio":
+    bitrate_list = get_audio_bitrates(url)
+    if not bitrate_list:
+        print("No audio formats found.")
+    else:
+        print("\nAvailable Audio Bitrates:")
+        for br in bitrate_list:
+            print(f"{br}k")
+        selected_br = input("\nEnter desired Quality : ").strip()
+        download_audio(url, selected_br)
+
 else:
-    print("Please Enter The Vaild Media Type!!!")
+    print("Invalid media type. Please choose the Correct formate.")
