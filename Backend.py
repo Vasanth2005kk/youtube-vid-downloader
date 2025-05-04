@@ -1,6 +1,10 @@
 import subprocess
 import re
 
+try:
+    subprocess.run(['yt-dlp','--version'])
+except Exception:
+    subprocess.run(['sudo','apt','install','yt-dlp'])
 def get_video_resolutions(url):
     result = subprocess.run(["yt-dlp", "-F", url], capture_output=True, text=True)
     lines = result.stdout.splitlines()
@@ -26,7 +30,7 @@ def get_audio_bitrates(url):
     return sorted(bitrates, key=int)
 
 def download_video(url, resolution):
-    format_selector = f"bestvideo[height={resolution}]+bestaudio"
+    format_selector = f"bestvideo[height<={resolution}]+bestaudio"
     print(f"\nDownloading video at {resolution}p...\n")
     subprocess.run(["yt-dlp", "-f", format_selector, url])
 
