@@ -7,6 +7,7 @@
     <title>YouTube Downloader</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="popup.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 
 <body>
@@ -45,6 +46,7 @@
     <!-- Main Music Container -->
     <div class="main-music-container" id="active">
         <div class="header"></div>
+        <img src="images/return back.png" alt="return back image" width="20px" height="20px" id="a-return-back">
         <div class="icon-block">
             <img src="images/wave-sound.png" alt="music icon">
             <span>Music</span>
@@ -74,6 +76,7 @@
     <!-- Main Video Container -->
     <div class="main-video-container" id="active">
         <div class="header"></div>
+        <img src="images/return back.png" alt="return back image" width="20px" height="20px" id="v-return-back">
         <div class="icon-block">
             <img src="images/film(1).png" alt="music icon">
             <span>Music</span>
@@ -101,6 +104,8 @@
     </div>
     <script src="jquery-3.7.1.js.js"></script>
     <script src="popup.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init();</script>
 </body>
 
 </html>

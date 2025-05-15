@@ -101,6 +101,15 @@ body {
 }
 
 /* Music and Video Buttons */
+
+/* return back to home desgin */
+#a-return-back,#v-return-back{
+position: absolute;
+top: 30px;
+left: 20px;
+width: 25px;
+height: 25px;
+}
 .music,
 .video {
     text-align: center;
@@ -231,4 +240,28 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+}
+
+/* Toast Message Styling */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    height: 40px;
+    background-color: red; /* default to error */
+    color: white;
+    font-weight: 500;
+    display: flex;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid black;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.toast.success {
+    background-color: green;
 }
