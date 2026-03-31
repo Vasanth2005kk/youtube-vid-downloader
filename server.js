@@ -43,18 +43,21 @@ app.post("/formats", async (req, res) => {
   try {
     logger(`Fetching info for: ${url}`);
     const cookiePath = path.join(__dirname, 'cookies.txt');
-    console.log("cookiePath", cookiePath);
     const flags = {
       dumpSingleJson: true,
       noWarnings: true,
       preferFreeFormats: true,
+      noCheckCertificates: true,
+      referer: 'https://www.youtube.com/',
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
       extractorArgs: 'youtube:player_client=android_web,ios,web'
     };
 
     if (fs.existsSync(cookiePath)) {
       flags.cookies = cookiePath;
-      logger("Using cookies.txt for authentication...");
+      logger("✅ SUCCESS: Found cookies.txt. Using it for authentication.");
+    } else {
+      logger("❌ WARNING: cookies.txt NOT FOUND in " + __dirname);
     }
 
     const info = await youtubedl(url, flags, {
