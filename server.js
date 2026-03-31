@@ -46,7 +46,8 @@ app.post("/formats", async (req, res) => {
       dumpSingleJson: true,
       noWarnings: true,
       preferFreeFormats: true,
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+      extractorArgs: 'youtube:player_client=android_web,ios,web'
     }, {
       executablePath: '/usr/local/bin/yt-dlp'
     });
@@ -166,7 +167,9 @@ app.get("/download", async (req, res) => {
       output: "-",
       mergeOutputFormat: type === "video" ? mergeExt : undefined,
       noWarnings: true,
-      ffmpegLocation: "/usr/bin/ffmpeg"
+      ffmpegLocation: "/usr/bin/ffmpeg",
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+      extractorArgs: 'youtube:player_client=android_web,ios,web'
     };
 
     // We use the raw child process via youtube-dl-exec's create method
@@ -227,7 +230,8 @@ app.post("/download", async (req, res) => {
     const info = await youtubedl(url, {
       dumpSingleJson: true,
       noWarnings: true,
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+      extractorArgs: 'youtube:player_client=android_web,ios,web'
     }, {
       executablePath: '/usr/local/bin/yt-dlp'
     });
