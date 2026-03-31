@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const youtubedl = require("youtube-dl-exec");
+const youtubedl = require("youtube-dl-exec").create("/usr/local/bin/yt-dlp");
 const path = require("path");
 const fs = require("fs");
 // const { v4: uuidv4 } = require("uuid"); // no longer used
@@ -118,7 +118,7 @@ app.post("/formats", async (req, res) => {
     res.json(result);
   } catch (err) {
     logger(`Info error: ${err.message}`);
-    res.status(500).json({ error: "Failed to fetch video info" });
+    res.status(500).json({ error: "Failed to fetch video info: " + err.message });
   }
 
 });

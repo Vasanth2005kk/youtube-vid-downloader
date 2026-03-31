@@ -14,9 +14,10 @@ const api = typeof browser !== "undefined" ? browser : chrome;
 
 // Backend Server URL - Change this to your Render URL after deployment!
 const LOCAL_SERVER = "http://127.0.0.1:5000";
-const REMOTE_SERVER = "https://your-app-name.onrender.com"; // Replace with your URL!
+const REMOTE_SERVER = "https://youtube-vid-downloader-p8fo.onrender.com"; // Replace with your URL!
 
-const SERVER = LOCAL_SERVER; // Flip this to REMOTE_SERVER after you deploy to Render.
+// const SERVER = LOCAL_SERVER; // Flip this to REMOTE_SERVER after you deploy to Render.
+const SERVER = REMOTE_SERVER; // Flip this to REMOTE_SERVER after you deploy to Render.
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const urlInput = document.getElementById("url-input");
@@ -285,12 +286,12 @@ btnDetect.addEventListener("click", async () => {
 
     let tabUrl = tabs && tabs[0] ? tabs[0].url : null;
     let tabTitle = tabs && tabs[0] ? tabs[0].title : "";
-    
+
     // Fallback: If for some reason the active tab wasn't found in last focused window, try all windows
     if (!tabUrl || tabUrl.startsWith(api.runtime.getURL(""))) {
-       const allTabs = await new Promise(r => api.tabs.query({ active: true, windowType: 'normal' }, r));
-       tabUrl = allTabs && allTabs[0] ? allTabs[0].url : null;
-       tabTitle = allTabs && allTabs[0] ? allTabs[0].title : "";
+      const allTabs = await new Promise(r => api.tabs.query({ active: true, windowType: 'normal' }, r));
+      tabUrl = allTabs && allTabs[0] ? allTabs[0].url : null;
+      tabTitle = allTabs && allTabs[0] ? allTabs[0].title : "";
     }
 
     // Clean " - YouTube" and other junk from title to use as base filename
@@ -302,14 +303,14 @@ btnDetect.addEventListener("click", async () => {
 
     // More flexible YouTube detection
     if (tabUrl && (tabUrl.includes("youtube.com/") || tabUrl.includes("youtu.be/"))) {
-      
+
       if (tabUrl.includes("&")) {
         tabUrl = tabUrl.split("&")[0];
       }
-      
+
       urlInput.value = tabUrl;
       showToast("YouTube tab detected!", "success");
-      
+
       if (isYouTubeURL(tabUrl)) {
         await fetchFormats(tabUrl);
       }
