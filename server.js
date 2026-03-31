@@ -78,19 +78,19 @@ app.post("/formats", async (req, res) => {
       } else if (isVideo) {
         const h = f.height || 0;
         if (h === 0) return;
-        
+
         // Prioritize MP4 and higher bitrate
         const current = bestVideo.get(h);
-        const isBetter = !current || 
-                        (f.ext === "mp4" && current.ext !== "mp4") ||
-                        (f.ext === current.ext && (f.tbr || 0) > (current.tbr || 0));
+        const isBetter = !current ||
+          (f.ext === "mp4" && current.ext !== "mp4") ||
+          (f.ext === current.ext && (f.tbr || 0) > (current.tbr || 0));
 
         if (isBetter) {
           const rawSize = f.filesize || f.filesize_approx || 0;
           // Add audio size to the estimate if format is video-only
           const needsMerge = f.acodec === "none";
           const totalSize = (needsMerge ? rawSize + audioSize : rawSize);
-          
+
           bestVideo.set(h, {
             format_id: f.format_id,
             height: h,
@@ -160,7 +160,7 @@ app.get("/download", async (req, res) => {
     // Use MP4 only for H264 sources.
     const isWebm = format_id.includes("webm") || format_id.match(/^(271|313|303|248|247|244|243|242|278|330|331|332|333|334|335|336|337|401|400|399|398|397|396|395|394)$/);
     const mergeExt = type === "video" ? (isWebm ? "mkv" : "mp4") : "mp3";
-    
+
     const flags = {
       format: formatOption,
       output: "-",
@@ -173,7 +173,7 @@ app.get("/download", async (req, res) => {
     const ytProcess = youtubedl.exec(url, flags);
 
     ytProcess.stdout.pipe(res);
-    
+
     // Add error handlers to prevent process crashes
     ytProcess.on("error", (err) => {
       logger(`CRITICAL: ytProcess failed to start: ${err.message}`);
@@ -217,12 +217,12 @@ app.post("/download", async (req, res) => {
 
     // 🔥 SMART LOGIC (from user provided snippet)
     let formatOption = format_id;
-    
+
     // We need to know if the selected format is video-only to apply smart logic
     // We can fetch info again or check if we have it in cache (better)
     // Actually, in the server context, we just use what's passed.
     // If the frontend (popup.js) passed a format_id, we check its properties.
-    
+
     // Let's get the info first to check vcodec/acodec like the user snippet
     const info = await youtubedl(url, {
       dumpSingleJson: true,
@@ -278,7 +278,7 @@ app.post("/download", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  logger(`YouTube Downloader API (Node.js) — http://127.0.0.1:${PORT}`);
+  logger(`YouTube Downloader API (Node.js) — http://0.0.0.0:${PORT}`);
 });
 
 // Global error handlers to prevent server crashes

@@ -15,15 +15,18 @@
     }
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
   "permissions": [
     "activeTab",
     "tabs",
     "downloads",
+    "https://youtube-vid-downloader-p8fo.onrender.com/*",
     "http://127.0.0.1/*",
     "http://localhost/*"
   ],
-  "content_security_policy": "default-src 'self'; connect-src http://127.0.0.1:5000 http://localhost:5000 https://*.onrender.com; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:"
+  "content_security_policy": "default-src 'self'; connect-src http://127.0.0.1:5000 http://localhost:5000 https://youtube-vid-downloader-p8fo.onrender.com; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:"
 }
