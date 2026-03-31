@@ -1,0 +1,30 @@
+name: Package Extension
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ] # Create a Release when you push a tag (e.g., git tag v1.0 && git push origin v1.0)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Zip
+        run: |
+          zip -r youtube-downloader.zip manifest.json background.js popup/
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-downloader-extension
+          path: youtube-downloader.zip
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: youtube-downloader.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
