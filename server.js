@@ -43,10 +43,12 @@ app.post("/formats", async (req, res) => {
   try {
     logger(`Fetching info for: ${url}`);
     const info = await youtubedl(url, {
-
       dumpSingleJson: true,
       noWarnings: true,
       preferFreeFormats: true,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    }, {
+      executablePath: '/usr/local/bin/yt-dlp'
     });
 
     // Use maps to find the best format of each type/resolution
@@ -225,6 +227,9 @@ app.post("/download", async (req, res) => {
     const info = await youtubedl(url, {
       dumpSingleJson: true,
       noWarnings: true,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    }, {
+      executablePath: '/usr/local/bin/yt-dlp'
     });
 
     const selected = info.formats.find(f => f.format_id === format_id);
