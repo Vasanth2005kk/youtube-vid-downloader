@@ -9,7 +9,7 @@
   },
   "browser_action": {
     "default_title": "YouTube Downloader",
-
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "48": "popup/images/play.png"
     }

@@ -15,21 +15,21 @@ const api = typeof browser !== "undefined" ? browser : chrome;
 const SERVER = "http://127.0.0.1:5000";
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
-const urlInput       = document.getElementById("url-input");
-const btnDetect      = document.getElementById("btn-detect");
-const btnFetch       = document.getElementById("btn-fetch");
-const loadingEl      = document.getElementById("loading");
-const formatsPanel   = document.getElementById("formats-panel");
-const statusMsg      = document.getElementById("status-msg");
-const downloadBar    = document.getElementById("download-bar");
-const downloadLabel  = document.getElementById("download-label");
-const toastEl        = document.getElementById("toast");
-const tabBtns        = document.querySelectorAll(".tab-btn");
-const contentVideo   = document.getElementById("content-video");
-const contentAudio   = document.getElementById("content-audio");
-const videoList      = document.getElementById("video-formats-list");
-const audioList      = document.getElementById("audio-formats-list");
-const btnClose       = document.getElementById("btn-close-popup");
+const urlInput = document.getElementById("url-input");
+const btnDetect = document.getElementById("btn-detect");
+const btnFetch = document.getElementById("btn-fetch");
+const loadingEl = document.getElementById("loading");
+const formatsPanel = document.getElementById("formats-panel");
+const statusMsg = document.getElementById("status-msg");
+const downloadBar = document.getElementById("download-bar");
+const downloadLabel = document.getElementById("download-label");
+const toastEl = document.getElementById("toast");
+const tabBtns = document.querySelectorAll(".tab-btn");
+const contentVideo = document.getElementById("content-video");
+const contentAudio = document.getElementById("content-audio");
+const videoList = document.getElementById("video-formats-list");
+const audioList = document.getElementById("audio-formats-list");
+const btnClose = document.getElementById("btn-close-popup");
 
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -71,21 +71,6 @@ function showToast(msg, type = "") {
   }, 3000);
 }
 
-// ── Tab detection ─────────────────────────────────────────────────────────────
-async function detectYouTubeTab() {
-  try {
-    const tabs = await api.tabs.query({ active: true, lastFocusedWindow: true });
-
-    const tab = tabs[0];
-    if (tab && isYouTubeURL(tab.url)) {
-      return tab.url;
-    }
-  } catch (e) {
-    console.error("Tab query failed:", e);
-  }
-  return null;
-}
-
 // ── Format fetching ───────────────────────────────────────────────────────────
 async function fetchFormats(url) {
   showLoading(true);
@@ -121,7 +106,7 @@ async function fetchFormats(url) {
     renderVideoFormats();
     renderAudioFormats();
     formatsPanel.classList.remove("hidden");
-    
+
     const titleSnippet = data.title ? ` fetched: ${data.title.substring(0, 30)}...` : "";
     showToast("Formats loaded!" + titleSnippet, "success");
 
@@ -231,19 +216,25 @@ async function triggerDownload(type, formatId, height) {
     // Find the raw size for the selected format to pass to server (for Content-Length)
     const selectedFmt = cachedVideo.concat(cachedAudio).find(f => f.format_id === formatId);
     const rawSize = selectedFmt ? (selectedFmt.raw_size || 0) : 0;
-    
+
     const downloadUrl = `${SERVER}/download?url=${encodeURIComponent(url)}&type=${type}&format_id=${encodeURIComponent(formatId)}&title=${encodeURIComponent(cachedTitle)}&size=${rawSize}`;
 
+    // 1. Sanitize the title for filename (remove invalid chars like / \ : * ? " < > |)
+    const safeTitle = cachedTitle.replace(/[\/\\?%*:|"<>]/g, '_').trim();
+    const ext = (type === "audio") ? "mp3" : "mp4";
+    const filename = `${safeTitle}.${ext}`;
 
-
-    
     // Use the official downloads API if available (MV2/MV3)
-    // This allows the browser to handle the download independently of the popup's lifecycle
     if (api.downloads && api.downloads.download) {
-      await api.downloads.download({
-        url: downloadUrl,
-        filename: `${type}_${formatId}.${type === "audio" ? "mp3" : "mp4"}`,
-        saveAs: true
+      await new Promise((resolve, reject) => {
+        api.downloads.download({
+          url: downloadUrl,
+          filename: filename,
+          saveAs: true
+        }, (id) => {
+          if (api.runtime.lastError) reject(api.runtime.lastError);
+          else resolve(id);
+        });
       });
       showToast("Download started!", "success");
       downloadLabel.textContent = `Download handed off to browser manager`;
@@ -282,12 +273,49 @@ tabBtns.forEach(btn => {
 
 // ── Event: Auto-detect ────────────────────────────────────────────────────────
 btnDetect.addEventListener("click", async () => {
-  const tabUrl = await detectYouTubeTab();
-  if (tabUrl) {
-    urlInput.value = tabUrl;
-    showToast("YouTube tab detected!", "success");
-  } else {
-    showToast("No active YouTube tab found", "error");
+  try {
+    // Explicitly search for active tabs in 'normal' windows to avoid detecting the popup itself
+    const tabs = await new Promise(resolve => {
+      api.tabs.query({ active: true, lastFocusedWindow: true, windowType: 'normal' }, resolve);
+    });
+
+    let tabUrl = tabs && tabs[0] ? tabs[0].url : null;
+    let tabTitle = tabs && tabs[0] ? tabs[0].title : "";
+    
+    // Fallback: If for some reason the active tab wasn't found in last focused window, try all windows
+    if (!tabUrl || tabUrl.startsWith(api.runtime.getURL(""))) {
+       const allTabs = await new Promise(r => api.tabs.query({ active: true, windowType: 'normal' }, r));
+       tabUrl = allTabs && allTabs[0] ? allTabs[0].url : null;
+       tabTitle = allTabs && allTabs[0] ? allTabs[0].title : "";
+    }
+
+    // Clean " - YouTube" and other junk from title to use as base filename
+    if (tabTitle) {
+      cachedTitle = tabTitle.replace(/ - YouTube$/i, "").trim();
+    }
+
+    // console.log("Auto-detect URL:", tabUrl);
+
+    // More flexible YouTube detection
+    if (tabUrl && (tabUrl.includes("youtube.com/") || tabUrl.includes("youtu.be/"))) {
+      
+      if (tabUrl.includes("&")) {
+        tabUrl = tabUrl.split("&")[0];
+      }
+      
+      urlInput.value = tabUrl;
+      showToast("YouTube tab detected!", "success");
+      
+      if (isYouTubeURL(tabUrl)) {
+        await fetchFormats(tabUrl);
+      }
+    } else {
+      console.warn("No valid YouTube tab found. URL:", tabUrl);
+      showToast("No active YouTube tab found", "error");
+    }
+  } catch (err) {
+    console.error("Detect Error:", err);
+    showToast("Error detecting tab", "error");
   }
 });
 
@@ -305,13 +333,9 @@ btnFetch.addEventListener("click", async () => {
   await fetchFormats(url);
 });
 
-// ── On popup open: auto-detect and fetch ──────────────────────────────────────
-(async () => {
-  const tabUrl = await detectYouTubeTab();
-  if (tabUrl) {
-    urlInput.value = tabUrl;
-    await fetchFormats(tabUrl);
-  } else {
-    showStatus("Open a YouTube video tab, or paste a URL above.", "");
-  }
-})();
+// ── On Load ──────────────────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", () => {
+  // Auto-detect YouTube tab on popup open
+  btnDetect.click();
+});
+

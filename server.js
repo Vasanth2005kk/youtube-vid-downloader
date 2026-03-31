@@ -86,7 +86,8 @@ app.post("/formats", async (req, res) => {
         if (isBetter) {
           const rawSize = f.filesize || f.filesize_approx || 0;
           // Add audio size to the estimate if format is video-only
-          const totalSize = (f.acodec === "none" ? rawSize + audioSize : rawSize);
+          const needsMerge = f.acodec === "none";
+          const totalSize = (needsMerge ? rawSize + audioSize : rawSize);
           
           bestVideo.set(h, {
             format_id: f.format_id,
@@ -94,7 +95,10 @@ app.post("/formats", async (req, res) => {
             ext: f.ext,
             size: totalSize ? (totalSize / (1024 * 1024)).toFixed(2) + " MB" : "Unknown",
             raw_size: totalSize,
-            tbr: f.tbr || 0
+            tbr: f.tbr || 0,
+            vcodec: f.vcodec,
+            acodec: f.acodec,
+            needsMerge: needsMerge
           });
         }
       }
@@ -124,13 +128,15 @@ app.get("/download", async (req, res) => {
   if (!url || !format_id) return res.status(400).send("Missing parameters");
 
   const safeTitle = (title || "video").replace(/[\\\/:*?"<>|]/g, "");
-  const finalExt = type === "audio" ? "mp3" : "mp4";
+  const isWebm = (format_id || "").includes("webm") || (format_id || "").match(/^(271|313|303|248|247|244|243|242|278|330|331|332|333|334|335|336|337|401|400|399|398|397|396|395|394)$/);
+  const finalExt = type === "audio" ? "mp3" : (isWebm ? "mkv" : "mp4");
   const filename = `${safeTitle}.${finalExt}`;
 
-  // SMART LOGIC (guess based on type if missing)
+  // SMART LOGIC: If downloading video and the format_id is single (video-only), add audio.
   let formatOption = format_id;
   if (type === "video" && !format_id.includes("+")) {
-    formatOption = `${format_id}+bestaudio`;
+    // Prefer m4a audio for better compatibility with mp4 video
+    formatOption = `${format_id}+bestaudio[ext=m4a]/bestaudio`;
   }
 
   logger(`INSTANT stream starting for: ${filename} (Size: ${size || 'unknown'})`);
@@ -148,11 +154,17 @@ app.get("/download", async (req, res) => {
   try {
     // IMPORTANT: use exec to get the child process and pipe stdout to the response.
     // -o - tells yt-dlp to stream the output to stdout.
+    // Use MKV for WEBM sources (VP9/AV1) to ensure video+audio play correctly.
+    // Use MP4 only for H264 sources.
+    const isWebm = format_id.includes("webm") || format_id.match(/^(271|313|303|248|247|244|243|242|278|330|331|332|333|334|335|336|337|401|400|399|398|397|396|395|394)$/);
+    const mergeExt = type === "video" ? (isWebm ? "mkv" : "mp4") : "mp3";
+    
     const flags = {
       format: formatOption,
       output: "-",
-      mergeOutputFormat: type === "video" ? "mp4" : undefined,
+      mergeOutputFormat: type === "video" ? mergeExt : undefined,
       noWarnings: true,
+      ffmpegLocation: "/usr/bin/ffmpeg"
     };
 
     // We use the raw child process via youtube-dl-exec's create method
@@ -219,8 +231,8 @@ app.post("/download", async (req, res) => {
     if (!selected) return res.status(400).json({ error: "Invalid format_id" });
 
     if (selected.vcodec !== "none" && selected.acodec === "none") {
-      console.log("⚡ Video detected → adding best audio automatically...");
-      formatOption = `${format_id}+bestaudio`;
+      console.log(`⚡ Video detected (video-only) → merging with best m4a audio...`);
+      formatOption = `${format_id}+bestaudio[ext=m4a]/bestaudio`;
     }
 
     // Set up temp path
