@@ -2,114 +2,77 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Downloader</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="popup.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
-    <div class="home-container">
-        <!-- Logo Section -->
-        <div class="logo">
-            <img src="images/play.png" alt="play icon" width="23px" height="24px">
-            <span class="logo-heading">YouTube Downloader</span>
-            <img src="images/download.png" alt="download icon" width="23px" height="20px">
-        </div>
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <input type="text" placeholder="Search or Paste YouTube link here" id="search-url">
-        </div>
-        <div id="start">Start</div>
-        <!-- Music and Video Buttons -->
-        <div class="video-audio-container" id="active">
-            <div class="music">
-                <div class="music-image">
-                    <img src="images/wave-sound.png" alt="music icon" width="20px" height="24px">
-                </div>
-                <span>Video</span>
-            </div>
-            <div class="video">
-                <div class="video-image">
-                    <img src="images/film(1).png" alt="video icon" width="20px" height="23px">
-                </div>
-                <span>Music</span>
-            </div>
-            <div class="footer"></div>
-        </div>
-        <div id="loading-overlay">
-            <div class="loading-box">
-                <div class="spinner"></div>
-                <p>Fetching formats...</p>
-            </div>
-        </div>
+
+  <!-- ===== HOME SCREEN ===== -->
+  <div class="screen" id="screen-home">
+    <div class="header-bar">
+      <img src="images/play.png" alt="logo" width="22" height="22">
+      <span class="brand">YT Downloader</span>
+      <button id="btn-close-popup" class="btn-close-popup" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+
     </div>
 
-
-    <!-- Main Music Container -->
-    <div class="main-music-container" id="active">
-        <div class="header"></div>
-        <img src="images/return back.png" alt="return back image" width="20px" height="20px" id="a-return-back">
-        <div class="icon-block">
-            <img src="images/wave-sound.png" alt="music icon">
-            <span>Music</span>
-        </div>
-        <!-- MP3 Formats -->
-        <div class="mp3-formates">
-            <!-- <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div>
-            <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div>
-            <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div>
-            <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div> -->
-        </div>
-        <div class="footer"></div>
+    <div class="url-section">
+      <div class="url-row">
+        <input type="text" id="url-input" placeholder="Paste YouTube URL here..." autocomplete="off" spellcheck="false">
+        <button id="btn-detect" title="Auto-detect from active tab">
+          <i class="fas fa-crosshairs"></i>
+        </button>
+      </div>
+      <button id="btn-fetch" class="btn-primary">
+        <i class="fas fa-search"></i> Get Formats
+      </button>
     </div>
 
-    <!-- Main Video Container -->
-    <div class="main-video-container" id="active">
-        <div class="header"></div>
-        <img src="images/return back.png" alt="return back image" width="20px" height="20px" id="v-return-back">
-        <div class="icon-block">
-            <img src="images/film(1).png" alt="music icon">
-            <span>Music</span>
-        </div>
-        <!-- MP4 Formats -->
-        <div class="mp4-formates">
-            <!-- <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div>
-            <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div>
-            <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div>
-            <div class="formates">
-                <label for="btn">Formates</label>
-                <button><i class="fa fa-download"></i></button>
-            </div> -->
-        </div>
-        <div class="footer"></div>
+    <div id="status-msg" class="status-msg hidden"></div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <span>Fetching formats…</span>
     </div>
-    <script src="popup.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init();</script>
+
+    <!-- Formats Panel -->
+    <div id="formats-panel" class="formats-panel hidden">
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-video" data-tab="video">
+          <i class="fas fa-film"></i> Video
+        </button>
+        <button class="tab-btn" id="tab-audio" data-tab="audio">
+          <i class="fas fa-music"></i> Audio
+        </button>
+      </div>
+
+      <div class="tab-content" id="content-video">
+        <div class="formats-list" id="video-formats-list"></div>
+      </div>
+
+      <div class="tab-content hidden" id="content-audio">
+        <div class="formats-list" id="audio-formats-list"></div>
+      </div>
+    </div>
+
+    <!-- Download Progress -->
+    <div id="download-bar" class="download-bar hidden">
+      <i class="fas fa-download"></i>
+      <span id="download-label">Downloading…</span>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="popup.js"></script>
 </body>
 
 </html>
