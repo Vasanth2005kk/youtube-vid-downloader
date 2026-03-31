@@ -12,7 +12,11 @@
 // Firefox uses `browser.*`, Chrome uses `chrome.*`
 const api = typeof browser !== "undefined" ? browser : chrome;
 
-const SERVER = "http://127.0.0.1:5000";
+// Backend Server URL - Change this to your Render URL after deployment!
+const LOCAL_SERVER = "http://127.0.0.1:5000";
+const REMOTE_SERVER = "https://your-app-name.onrender.com"; // Replace with your URL!
+
+const SERVER = LOCAL_SERVER; // Flip this to REMOTE_SERVER after you deploy to Render.
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const urlInput = document.getElementById("url-input");
