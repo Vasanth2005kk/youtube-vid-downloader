@@ -42,13 +42,22 @@ app.post("/formats", async (req, res) => {
 
   try {
     logger(`Fetching info for: ${url}`);
-    const info = await youtubedl(url, {
+    const cookiePath = path.join(__dirname, 'cookies.txt');
+    console.log("cookiePath", cookiePath);
+    const flags = {
       dumpSingleJson: true,
       noWarnings: true,
       preferFreeFormats: true,
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
       extractorArgs: 'youtube:player_client=android_web,ios,web'
-    }, {
+    };
+
+    if (fs.existsSync(cookiePath)) {
+      flags.cookies = cookiePath;
+      logger("Using cookies.txt for authentication...");
+    }
+
+    const info = await youtubedl(url, flags, {
       executablePath: '/usr/local/bin/yt-dlp'
     });
 
@@ -172,6 +181,11 @@ app.get("/download", async (req, res) => {
       extractorArgs: 'youtube:player_client=android_web,ios,web'
     };
 
+    const cookiePath = path.join(__dirname, 'cookies.txt');
+    if (fs.existsSync(cookiePath)) {
+      flags.cookies = cookiePath;
+    }
+
     // We use the raw child process via youtube-dl-exec's create method
     const ytProcess = youtubedl.exec(url, flags);
 
@@ -227,12 +241,19 @@ app.post("/download", async (req, res) => {
     // If the frontend (popup.js) passed a format_id, we check its properties.
 
     // Let's get the info first to check vcodec/acodec like the user snippet
-    const info = await youtubedl(url, {
+    const cookiePath = path.join(__dirname, 'cookies.txt');
+    const flags = {
       dumpSingleJson: true,
       noWarnings: true,
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
       extractorArgs: 'youtube:player_client=android_web,ios,web'
-    }, {
+    };
+
+    if (fs.existsSync(cookiePath)) {
+      flags.cookies = cookiePath;
+    }
+
+    const info = await youtubedl(url, flags, {
       executablePath: '/usr/local/bin/yt-dlp'
     });
 
